@@ -39,8 +39,6 @@ public class Anxiety {
         //printDeck();
         //printPlayers();
         startGame();
-
-        //Map consumer
     }
 
     private void createDeck() {
