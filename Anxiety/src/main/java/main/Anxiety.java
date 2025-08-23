@@ -4,7 +4,6 @@ import domain.Card;
 import domain.Player;
 import domain.enums.Category;
 import domain.enums.Value;
-import effects.Advance;
 import effects.ChangeCategory;
 import effects.DrawFour;
 import effects.DrawTwo;
@@ -26,8 +25,8 @@ public class Anxiety {
     private static final Effect DRAW_TWO = new DrawTwo();
     private static final Effect DRAW_FOUR = new DrawFour();
     private static final Card FOLD_CARD = new Card(Value.FOLD, Category.FOLD);
-    private static final int NUMBER_OF_PLAYERS = 4;
-    private static final int NUMBER_OF_CARDS = 7;
+    private final int NUMBER_OF_PLAYERS;
+    private final int NUMBER_OF_CARDS;
     private final CardEffects cardEffects;
     private final Deque<Card> deck;
     private final Deque<Card> played;
@@ -35,28 +34,36 @@ public class Anxiety {
     private Category lastPlayedCategory;
     private int cardsToDraw;
 
-    Anxiety() {
+    Anxiety(int numberOfPlayers, int numberOfCards) {
+        this.NUMBER_OF_PLAYERS = numberOfPlayers;
+        this.NUMBER_OF_CARDS = numberOfCards;
         this.deck = new ArrayDeque<>();
         this.played = new ArrayDeque<>();
         this.players = new ArrayDeque<>();
         this.cardEffects = new CardEffects();
 
-        createCardEffects();
-        createDeck();
-        initPlayers();
+        if (numberOfPlayers * numberOfPlayers < 52) {
+            createCardEffects();
+            createDeck();
+            initPlayers();
 
-        dealInitialCards();
-        startGame();
+            dealInitialCards();
+            startGame();
+        } else {
+            System.out.println("Too many players or cards dealt to players. Max 52!");
+        }
     }
 
     private void createDeck() {
+        ArrayList<Card> tempList = new ArrayList<>(52);
+
         for (Value val : Value.playableValues()) {
             for (Category category : Category.playableValues()) {
-                this.deck.push(new Card(val, category));
+                tempList.add(new Card(val, category));
             }
         }
 
-        shuffle();
+        shuffle(tempList);
     }
 
     private void createCardEffects() {
@@ -69,8 +76,7 @@ public class Anxiety {
         cardEffects.add(Value.FOLD, new Fold());
     }
 
-    private void shuffle() {
-        List<Card> tempList = new ArrayList<>(deck);
+    private void shuffle(List<Card> tempList) {
         Collections.shuffle(tempList);
         deck.clear();
 
@@ -98,6 +104,11 @@ public class Anxiety {
     public void drawCards(final int numberOfCards) {
         if (deck.size() < numberOfCards) {
             reshuffleDeck();
+        }
+
+        if (deck.size() < numberOfCards) {
+            print("Not enough cards played to re-deal the deck. It is a draw!");
+            System.exit(1);
         }
 
         Player player = players.element();
@@ -238,22 +249,17 @@ public class Anxiety {
     }
 
     private void reshuffleDeck() {
-        if (deck.size() <= 1) {
-            print("RESHUFFLING");
-            Card lastPlayed = played.pop();
-            int size = played.size();
+        Card lastPlayed = played.pop();
+        int size = played.size();
 
-            if (size < 1) {
-                throw new IllegalStateException("Not enough cards played to re-deal the deck");
-            }
-
-            for (int i = 0; i < size; i++) {
-                deck.push(played.pop());
-            }
-
-            played.push(lastPlayed);
-            shuffle();
+        if (size < 1) {
+            print("Not enough cards played to re-deal the deck. It is a draw!");
+            System.exit(1);
         }
+
+        shuffle(new ArrayList<>(played));
+        played.clear();
+        played.push(lastPlayed);
     }
 
     public void skipNextPlayer() {
