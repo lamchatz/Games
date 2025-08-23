@@ -1,7 +1,7 @@
-package domain.effects;
+package effects;
 
-import Anxiety;
 import domain.Card;
+import main.Anxiety;
 
 public interface Effect {
     default void apply(Anxiety game, Card card) {

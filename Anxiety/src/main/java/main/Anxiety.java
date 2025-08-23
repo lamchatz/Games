@@ -1,16 +1,17 @@
-import domain.effects.CardEffects;
-import domain.effects.ChangeCategory;
-import domain.effects.DrawFour;
-import domain.effects.DrawTwo;
-import domain.effects.Effect;
-import domain.effects.Fold;
-import domain.effects.PlayAgain;
-import domain.effects.ReverseOrder;
-import domain.effects.SkipNext;
+package main;
+
 import domain.Card;
-import domain.enums.Category;
 import domain.Player;
+import domain.enums.Category;
 import domain.enums.Value;
+import effects.ChangeCategory;
+import effects.DrawFour;
+import effects.DrawTwo;
+import effects.Effect;
+import effects.Fold;
+import effects.PlayAgain;
+import effects.ReverseOrder;
+import effects.SkipNext;
 import util.Reader;
 
 import java.util.ArrayDeque;
@@ -131,7 +132,7 @@ public class Anxiety {
             do {
                 print("Please play your draw card.");
                 card = selectCardToPlay();
-            } while(!isDrawCard(card));
+            } while (!isDrawCard(card));
         } else {
             drawCards(cardsToDraw);
             cardsToDraw = 0;
@@ -292,11 +293,12 @@ public class Anxiety {
         Card card = this.played.element();
 
         if (card.hasValue(Value.ACE)) {
-            print(String.format("Last played: %s (%s)",card.print(), lastPlayedCategory));
+            print(String.format("Last played: %s (%s)", card.print(), lastPlayedCategory));
         } else {
-            print(String.format("Last played: %s",card.print()));
+            print(String.format("Last played: %s", card.print()));
         }
     }
+
     private void print(Object msg) {
         System.out.println(msg);
     }

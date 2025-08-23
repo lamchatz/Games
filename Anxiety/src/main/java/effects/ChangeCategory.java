@@ -1,7 +1,7 @@
-package domain.effects;
+package effects;
 
-import Anxiety;
 import domain.Card;
+import main.Anxiety;
 
 public class ChangeCategory implements Effect{
     @Override

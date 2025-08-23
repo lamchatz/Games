@@ -1,7 +1,9 @@
-package domain.effects;
+package main;
 
 import domain.Card;
 import domain.enums.Value;
+import effects.Advance;
+import effects.Effect;
 
 import java.util.HashMap;
 import java.util.Map;
