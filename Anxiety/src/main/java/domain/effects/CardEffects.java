@@ -1,4 +1,4 @@
-package effects;
+package domain.effects;
 
 import domain.Card;
 import domain.enums.Value;

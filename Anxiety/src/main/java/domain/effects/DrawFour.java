@@ -1,12 +1,12 @@
-package effects;
+package domain.effects;
 
 import Anxiety;
 import domain.Card;
 
-public class SkipNext implements Effect{
+public class DrawFour implements Effect{
     @Override
     public void apply(Anxiety game, Card card) {
         game.play(card);
-        game.skipNextPlayer();
+        game.draw(4);
     }
 }

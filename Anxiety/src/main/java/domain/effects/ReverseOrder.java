@@ -1,12 +1,12 @@
-package effects;
+package domain.effects;
 
 import Anxiety;
 import domain.Card;
 
-public class PlayAgain implements Effect{
+public class ReverseOrder implements Effect{
     @Override
     public void apply(Anxiety game, Card card) {
         game.play(card);
-        //doNothing
+        game.reverseOrder();
     }
 }

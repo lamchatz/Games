@@ -1,12 +1,11 @@
-package effects;
+package domain.effects;
 
 import Anxiety;
 import domain.Card;
 
-public class Fold implements Effect{
-
+public class ChangeCategory implements Effect{
     @Override
     public void apply(Anxiety game, Card card) {
-        game.fold();
+        game.changeCategory(card);
     }
 }
