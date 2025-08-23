@@ -39,7 +39,7 @@ public class Reader {
 
         String input;
         do {
-            System.out.println("Do you want to draw two or play your draw two card? [Play/Draw]");
+            System.out.println("Do you want to draw two or play your draw card? [Play/Draw]");
             input =  scanner.nextLine();
         } while (!ACCEPTABLE_DRAW_TWO_ANSWERS.contains(input.toLowerCase()));
 

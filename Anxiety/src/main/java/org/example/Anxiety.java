@@ -2,7 +2,9 @@ package org.example;
 
 import org.example.effects.CardEffects;
 import org.example.effects.ChangeCategory;
+import org.example.effects.DrawFour;
 import org.example.effects.DrawTwo;
+import org.example.effects.Effect;
 import org.example.effects.Fold;
 import org.example.effects.PlayAgain;
 import org.example.effects.SkipNext;
@@ -12,11 +14,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+import java.util.Optional;
 
 public class Anxiety {
+    private static final Effect DRAW_TWO = new DrawTwo();
+    private static final Effect DRAW_FOUR = new DrawFour();
     private static final Card FOLD_CARD = new Card(Value.FOLD, Category.FOLD);
     private static final int NUMBER_OF_PLAYERS = 2;
-    private static final int NUMBER_OF_CARDS = 7;
+    private static final int NUMBER_OF_CARDS = 15;
     private final CardEffects cardEffects;
     private final Deque<Card> deck;
     private final Deque<Card> played;
@@ -36,8 +41,6 @@ public class Anxiety {
         initPlayers();
 
         dealInitialCards();
-        //printDeck();
-        //printPlayers();
         startGame();
     }
 
@@ -53,7 +56,8 @@ public class Anxiety {
 
     private void createCardEffects() {
         cardEffects.add(Value.ACE, new ChangeCategory());
-        cardEffects.add(Value.SEVEN, new DrawTwo());
+        cardEffects.add(Value.FOUR, DRAW_FOUR);
+        cardEffects.add(Value.SEVEN, DRAW_TWO);
         cardEffects.add(Value.EIGHT, new PlayAgain());
         cardEffects.add(Value.NINE, new SkipNext());
         cardEffects.add(Value.FOLD, new Fold());
@@ -106,12 +110,58 @@ public class Anxiety {
     private void startGame() {
         while (gameNotOver()) {
             printLastPlayed();
-            Card card = selectCardToPlay();
+            Card card;
+            if (cardsToDraw > 0) {
+                card = resolveDrawPenalty();
+            } else {
+                card = selectCardToPlay();
+            }
 
             cardEffects.get(card).apply(this, card);
         }
 
         announceWinner();
+    }
+
+    private Card resolveDrawPenalty() {
+        Card card;
+        if (hasDrawCard() && Reader.readDrawTwo()) {
+            do {
+                print("Please play your draw card.");
+                card = selectCardToPlay();
+            } while(!isDrawCard(card));
+        } else {
+            drawCards(cardsToDraw);
+            cardsToDraw = 0;
+            card = selectCardToPlay();
+        }
+
+        return card;
+    }
+
+    private boolean hasDrawTwoCard() {
+        Optional<Value> drawTwo = cardEffects.getValueWith(DRAW_TWO);
+        return drawTwo.isPresent() && players.element().has(drawTwo.get());
+    }
+
+    private boolean hasDrawFourCard() {
+        Optional<Value> drawFour = cardEffects.getValueWith(DRAW_FOUR);
+        return drawFour.isPresent() && players.element().has(drawFour.get());
+    }
+
+    private boolean hasDrawCard() {
+        return hasDrawTwoCard() || hasDrawFourCard();
+    }
+
+    private boolean isDrawCard(Card card) {
+        return cardEffects.getValueWith(DRAW_TWO)
+                .map(card::hasValue)
+                .orElseGet(() ->
+                        cardEffects.getValueWith(DRAW_FOUR)
+                                .filter(card::hasValue)
+                                .isPresent()
+                );
+
     }
 
     public void play(Card card) {
@@ -178,9 +228,9 @@ public class Anxiety {
         }
     }
 
-    public void drawTwo() {
+    public void draw(int cardsToDraw) {
         advanceToNextPlayer();
-        drawCards(2);
+        this.cardsToDraw += cardsToDraw;
     }
 
     private void reshuffleDeck() {
