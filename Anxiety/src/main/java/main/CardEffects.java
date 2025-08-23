@@ -4,6 +4,7 @@ import domain.Card;
 import domain.enums.Value;
 import effects.Advance;
 import effects.Effect;
+import util.Reader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,18 @@ public class CardEffects {
     }
 
     public void add(Value value, Effect effect) {
+        if (this.effects.containsKey(value) && !Reader.overrideEffect(value, this.effects.get(value))) {
+            return;
+        }
+        if (hasEffect(effect) && !Reader.confirm(effect)) {
+            return;
+        }
+
         this.effects.put(value, effect);
+    }
+
+    private boolean hasEffect(Effect effect) {
+        return this.effects.values().stream().anyMatch(e -> e.getClass().equals(effect.getClass()));
     }
 
     private Effect get(Value value) {

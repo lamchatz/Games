@@ -4,6 +4,7 @@ import domain.Card;
 import domain.Player;
 import domain.enums.Category;
 import domain.enums.Value;
+import effects.Advance;
 import effects.ChangeCategory;
 import effects.DrawFour;
 import effects.DrawTwo;
@@ -290,12 +291,20 @@ public class Anxiety {
     }
 
     private void printLastPlayed() {
+        printEmptyLines();
+
         Card card = this.played.element();
 
         if (card.hasValue(Value.ACE)) {
             print(String.format("Last played: %s (%s)", card.print(), lastPlayedCategory));
         } else {
             print(String.format("Last played: %s", card.print()));
+        }
+    }
+
+    private void printEmptyLines() {
+        for (int i = 0; i < 50; i++) {
+            print("\n");
         }
     }
 

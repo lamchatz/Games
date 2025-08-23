@@ -2,6 +2,8 @@ package util;
 
 import domain.Card;
 import domain.enums.Category;
+import domain.enums.Value;
+import effects.Effect;
 
 import java.util.Scanner;
 import java.util.Set;
@@ -10,6 +12,7 @@ public class Reader {
     private static final Scanner scanner = new Scanner(System.in);
     private static final String PLEASE_SELECT_A_CARD = "Please select a card: ";
     private static final Set<String> ACCEPTABLE_DRAW_TWO_ANSWERS = Set.of("play", "draw");
+    private static final Set<String> YES_NO = Set.of("yes", "no", "y", "n");
 
     public static Card readCard() {
         System.out.println(PLEASE_SELECT_A_CARD);
@@ -27,7 +30,7 @@ public class Reader {
     }
 
     public static Category readCategory() {
-        System.out.println(String.format("Change to %s. Type the first letter", Category.playableValues()));
+        System.out.printf("Change to %s. Type the first letter%n", Category.playableValues());
         String input = scanner.nextLine();
 
         while (input.length() != 1) {
@@ -39,7 +42,6 @@ public class Reader {
     }
 
     public static boolean readDrawTwo() {
-
         String input;
         do {
             System.out.println("Do you want to draw two or play your draw card? [Play/Draw]");
@@ -48,5 +50,29 @@ public class Reader {
 
 
         return input.equalsIgnoreCase("play");
+    }
+
+    public static boolean confirm(Effect effect) {
+        String input;
+        do {
+            System.out.printf("Do you want to add the effect: %s for a second time? [Yes/No]\n", theNameOf(effect));
+            input =  scanner.nextLine();
+        } while (!YES_NO.contains(input.toLowerCase()));
+
+        return input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y");
+    }
+
+    public static boolean overrideEffect(Value value, Effect effect) {
+        String input;
+        do {
+            System.out.printf("Do you want to override the current effect of %s - %s [Yes/No]\n", value, theNameOf(effect));
+            input =  scanner.nextLine();
+        } while (!YES_NO.contains(input.toLowerCase()));
+
+        return input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y");
+    }
+
+    private static String theNameOf(Effect effect) {
+        return effect.getClass().getSimpleName();
     }
 }
