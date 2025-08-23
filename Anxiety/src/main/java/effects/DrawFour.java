@@ -1,7 +1,7 @@
-package org.example.effects;
+package effects;
 
-import org.example.Anxiety;
-import org.example.Card;
+import Anxiety;
+import domain.Card;
 
 public class DrawFour implements Effect{
     @Override

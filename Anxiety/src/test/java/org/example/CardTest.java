@@ -1,5 +1,8 @@
 package org.example;
 
+import domain.Card;
+import domain.enums.Category;
+import domain.enums.Value;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
