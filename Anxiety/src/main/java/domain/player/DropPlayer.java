@@ -1,50 +1,50 @@
-package domain;
+package domain.player;
 
+import domain.Card;
 import domain.enums.Value;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class Player {
+public class DropPlayer implements Player {
     private final Set<Card> hand;
     private final String name;
 
-    public Player(String name) {
+
+    public DropPlayer(String name) {
         this.hand = new TreeSet<>();
         this.name = Objects.requireNonNull(name);
     }
 
-    public Collection<Card> getHand() {
-        return hand;
-    }
-
-    public String getName() {
-        return name;
-    }
-
+    @Override
     public void draw(Card card) {
         hand.add(card);
     }
 
+    @Override
     public boolean has(Card card) {
         return this.hand.contains(card);
     }
 
+    @Override
     public boolean has(Value value) {
         return hand.stream().anyMatch(card -> value.equals(card.getValue()));
     }
 
+    @Override
     public boolean hasNoCards() {
         return this.hand.isEmpty();
     }
 
-    public void play(Card card) {
+    @Override
+    public Card play(Card card) {
         this.hand.remove(card);
+        return card;
     }
 
+    @Override
     public void print() {
         System.out.println(name);
 
@@ -60,7 +60,7 @@ public class Player {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Player player = (Player) o;
+        DropPlayer player = (DropPlayer) o;
 
         return name.equals(player.name);
     }

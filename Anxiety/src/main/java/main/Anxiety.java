@@ -1,9 +1,10 @@
 package main;
 
 import domain.Card;
-import domain.Player;
 import domain.enums.Category;
 import domain.enums.Value;
+import domain.player.DropPlayer;
+import domain.player.Player;
 import effects.ChangeCategory;
 import effects.DrawFour;
 import effects.DrawTwo;
@@ -85,7 +86,7 @@ public class Anxiety {
 
     private void initPlayers() {
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
-            players.offer(new Player("Player " + (i + 1)));
+            players.offer(new DropPlayer("Player " + (i + 1)));
         }
     }
 

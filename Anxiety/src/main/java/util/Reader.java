@@ -5,8 +5,11 @@ import domain.enums.Category;
 import domain.enums.Value;
 import effects.Effect;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Reader {
     private static final Scanner scanner = new Scanner(System.in);
@@ -45,7 +48,7 @@ public class Reader {
         String input;
         do {
             System.out.println("Do you want to draw two or play your draw card? [Play/Draw]");
-            input =  scanner.nextLine();
+            input = scanner.nextLine();
         } while (!ACCEPTABLE_DRAW_TWO_ANSWERS.contains(input.toLowerCase()));
 
 
@@ -56,7 +59,7 @@ public class Reader {
         String input;
         do {
             System.out.printf("Do you want to add the effect: %s for a second time? [Yes/No]\n", theNameOf(effect));
-            input =  scanner.nextLine();
+            input = scanner.nextLine();
         } while (!YES_NO.contains(input.toLowerCase()));
 
         return input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y");
@@ -66,7 +69,7 @@ public class Reader {
         String input;
         do {
             System.out.printf("Do you want to override the current effect of %s - %s [Yes/No]\n", value, theNameOf(effect));
-            input =  scanner.nextLine();
+            input = scanner.nextLine();
         } while (!YES_NO.contains(input.toLowerCase()));
 
         return input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y");
@@ -74,5 +77,24 @@ public class Reader {
 
     private static String theNameOf(Effect effect) {
         return effect.getClass().getSimpleName();
+    }
+
+    public static int askPlayer(int maxPlayers, int currentPlayer) {
+        List<Integer> range = range(maxPlayers, currentPlayer);
+
+        int input;
+        do {
+            System.out.printf("Select which player to ask %s\n", range);
+            input = Integer.parseInt(scanner.nextLine());
+        } while (!range.contains(input));
+
+        return input;
+    }
+
+    private static List<Integer> range(int maxPlayers, int currentPlayer) {
+        return IntStream.range(0, maxPlayers)
+                .filter(i -> i != currentPlayer)
+                .boxed()
+                .collect(Collectors.toList());
     }
 }
