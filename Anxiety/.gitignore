@@ -12,6 +12,8 @@
 *.iws
 *.ipr
 
+
+
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/

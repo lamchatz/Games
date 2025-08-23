@@ -1,10 +1,10 @@
 package org.example;
 
-public class Card {
+public class Card implements Comparable<Card> {
     private final Value value;
     private final Category category;
 
-    Card (Value value, Category category) {
+    Card(Value value, Category category) {
         this.value = value;
         this.category = category;
     }
@@ -66,5 +66,19 @@ public class Card {
         return "{" + "value=" + value +
                 ", category=" + category +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Card other) {
+        int catComp = this.getCategory().compareTo(other.getCategory());
+
+        if (catComp != 0) {
+            return catComp;
+        }
+
+        int thisVal = this.getValue().getVal();
+        int otherVal = other.getValue().getVal();
+
+        return Integer.compare(thisVal, otherVal);
     }
 }

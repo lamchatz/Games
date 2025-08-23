@@ -2,15 +2,19 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class Player {
-    private final Collection<Card> hand;
+    private final Set<Card> hand;
     private final String name;
 
     Player(String name) {
-        this.hand = new ArrayList<>(7);
+        this.hand = new TreeSet<>();
         this.name = Objects.requireNonNull(name);
     }
 

@@ -7,6 +7,7 @@ import org.example.effects.DrawTwo;
 import org.example.effects.Effect;
 import org.example.effects.Fold;
 import org.example.effects.PlayAgain;
+import org.example.effects.ReverseOrder;
 import org.example.effects.SkipNext;
 
 import java.util.ArrayDeque;
@@ -20,14 +21,13 @@ public class Anxiety {
     private static final Effect DRAW_TWO = new DrawTwo();
     private static final Effect DRAW_FOUR = new DrawFour();
     private static final Card FOLD_CARD = new Card(Value.FOLD, Category.FOLD);
-    private static final int NUMBER_OF_PLAYERS = 2;
-    private static final int NUMBER_OF_CARDS = 15;
+    private static final int NUMBER_OF_PLAYERS = 4;
+    private static final int NUMBER_OF_CARDS = 7;
     private final CardEffects cardEffects;
     private final Deque<Card> deck;
     private final Deque<Card> played;
     private final Deque<Player> players;
     private Category lastPlayedCategory;
-    private boolean drawTwo;
     private int cardsToDraw;
 
     Anxiety() {
@@ -56,6 +56,7 @@ public class Anxiety {
 
     private void createCardEffects() {
         cardEffects.add(Value.ACE, new ChangeCategory());
+        cardEffects.add(Value.TWO, new ReverseOrder());
         cardEffects.add(Value.FOUR, DRAW_FOUR);
         cardEffects.add(Value.SEVEN, DRAW_TWO);
         cardEffects.add(Value.EIGHT, new PlayAgain());
@@ -257,12 +258,13 @@ public class Anxiety {
         advanceToNextPlayer();
     }
 
-    private void reverseOrder() {
+    public void reverseOrder() {
         Deque<Player> temp = new ArrayDeque<>();
 
         while (!players.isEmpty()) {
             temp.push(players.poll());
         }
+
         while (!temp.isEmpty()) {
             players.offer(temp.pop());
         }
