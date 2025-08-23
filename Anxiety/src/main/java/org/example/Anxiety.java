@@ -69,9 +69,7 @@ public class Anxiety {
         Collections.shuffle(tempList);
         deck.clear();
 
-        for (Card card : tempList) {
-            deck.push(card);
-        }
+        deck.addAll(tempList);
     }
 
     private void initPlayers() {
@@ -278,7 +276,9 @@ public class Anxiety {
     }
 
     private void printDeck() {
-        deck.forEach(Card::print);
+        for (Card card : deck) {
+            print(card.print());
+        }
     }
 
     private void printPlayers() {
