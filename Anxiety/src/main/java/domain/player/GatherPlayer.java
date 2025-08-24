@@ -23,9 +23,7 @@ public class GatherPlayer extends DropPlayer implements ScoringPlayer {
         System.out.println("GATHERING");
 
         for (Card card : cards) {
-            Value val = card.getValue();
-
-            if (FIGURES.contains(val)) {
+            if (FIGURES.contains(card.getValue())) {
                 score++;
             }
             if (EXTRA.contains(card)) {
@@ -37,7 +35,11 @@ public class GatherPlayer extends DropPlayer implements ScoringPlayer {
     @Override
     public void jackPot(Card card) {
         System.out.printf("JACKPOT %s\n", card);
-        score += 10;
+        if (card.hasValue(Value.JACK)) {
+            score += 20;
+        } else {
+            score += 10;
+        }
     }
 
     @Override

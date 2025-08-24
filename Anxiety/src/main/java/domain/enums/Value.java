@@ -51,7 +51,7 @@ public enum Value {
     }
 
     public static Set<Value> getFigures() {
-        return Set.of(JACK, QUEEN, KING, ACE);
+        return Set.of(TEN, JACK, QUEEN, KING, ACE);
     }
 
     @Override

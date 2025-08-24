@@ -1,6 +1,7 @@
 package games;
 
 import domain.Card;
+import domain.enums.Value;
 import domain.player.GatherPlayer;
 import domain.player.Player;
 import domain.player.ScoringPlayer;
@@ -19,7 +20,7 @@ public class Kseri {
     private Deque<ScoringPlayer> players;
     private ScoringPlayer lastPlayerToGather;
 
-    Kseri () {
+    Kseri() {
         this.deck = new Deck(NUMBER_OF_CARDS, initPlayers());
         this.played = deck.dealPlayedCards();
 
@@ -44,37 +45,35 @@ public class Kseri {
             Card card = selectCardToPlay(player);
             Card lastPlayed = played.peek();
 
-            if (lastPlayed != null && card.sameTo(lastPlayed)) {
+            if (lastPlayed != null && (card.sameTo(lastPlayed) || card.hasValue(Value.JACK))) {
                 collect(player, card);
             } else {
                 this.played.push(card);
             }
 
             if (playersOutOfCards()) {
-                played.addAll(deck.dealPlayedCards());
                 deck.deal(NUMBER_OF_CARDS, players);
             }
 
             advanceToNextPlayer();
         }
 
-        print(String.format("Last player to gather was %s. he gathers now", lastPlayerToGather.getName()));
+        print(String.format("Last player to gather was %s. He gathers now", lastPlayerToGather.getName()));
         lastPlayerToGather.gather(played);
 
         for (ScoringPlayer player : players) {
             System.out.println(player.totalScore());
         }
-
-
-
     }
 
     private void collect(ScoringPlayer player, Card card) {
         if (played.size() == 1) {
             player.jackPot(card);
         } else {
+            this.played.push(card);
             player.gather(played);
         }
+
         lastPlayerToGather = player;
         played.clear();
     }
