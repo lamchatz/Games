@@ -1,6 +1,7 @@
-package main;
+package games;
 
 import domain.Card;
+import domain.CardEffects;
 import domain.enums.Category;
 import domain.enums.Value;
 import domain.player.DropPlayer;

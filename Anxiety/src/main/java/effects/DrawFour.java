@@ -1,7 +1,7 @@
 package effects;
 
 import domain.Card;
-import main.Anxiety;
+import games.Anxiety;
 
 public class DrawFour implements Effect{
     @Override

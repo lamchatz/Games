@@ -1,4 +1,4 @@
-package main;
+package games;
 
 import domain.Card;
 import domain.enums.Category;

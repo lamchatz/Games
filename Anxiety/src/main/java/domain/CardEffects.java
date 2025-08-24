@@ -1,6 +1,5 @@
-package main;
+package domain;
 
-import domain.Card;
 import domain.enums.Value;
 import effects.Advance;
 import effects.Effect;
