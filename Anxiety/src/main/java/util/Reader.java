@@ -44,7 +44,7 @@ public class Reader {
         return Category.parse(input.charAt(0));
     }
 
-    public static boolean readDrawTwo() {
+    public static boolean readDraw() {
         String input;
         do {
             System.out.println("Do you want to draw two or play your draw card? [Play/Draw]");

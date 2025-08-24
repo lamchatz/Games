@@ -1,62 +1,37 @@
 package games;
 
 import domain.Card;
-import domain.enums.Category;
 import domain.Count;
-import domain.enums.Value;
 import domain.player.PickPlayer;
 import domain.player.Player;
 import util.Reader;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
+import java.util.Collection;
 import java.util.List;
 
 public class GoFish {
-    private static final int NUMBER_OF_PLAYERS = 2;
+    private final int NUMBER_OF_PLAYERS;
     private static final int NUMBER_OF_CARDS = 15;
-    private final Deque<Card> deck;
-    private final List<Player> players;
-    private Count count;
+    private final Deck deck;
+    private List<Player> players;
+    private final Count count;
 
-    public GoFish() {
-        this.deck = new ArrayDeque<>();
-        this.players = new ArrayList<>(NUMBER_OF_PLAYERS);
+    public GoFish(final int  numberOfPlayers) {
+        this.NUMBER_OF_PLAYERS = numberOfPlayers;
         this.count = new Count(NUMBER_OF_PLAYERS);
+        this.deck = new Deck(NUMBER_OF_CARDS, initPlayers());
 
-        createDeck();
-        initPlayers();
-
-        dealInitialCards();
         startGame();
     }
 
-    private void createDeck() {
-        List<Card> tempList = new ArrayList<>(52);
-        for (Value val : Value.playableValues()) {
-            for (Category category : Category.playableValues()) {
-                tempList.add(new Card(val, category));
-            }
-        }
-
-        Collections.shuffle(tempList);
-        deck.addAll(tempList);
-    }
-
-    private void initPlayers() {
+    private Collection<Player> initPlayers() {
+        this.players = new ArrayList<>(NUMBER_OF_PLAYERS);
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
             players.add(new PickPlayer("Player " + (i + 1)));
         }
-    }
 
-    private void dealInitialCards() {
-        for (int i = 0; i < NUMBER_OF_CARDS; i++) {
-            for (Player player : players) {
-                player.draw(deck.pop());
-            }
-        }
+        return this.players;
     }
 
     private void startGame() {
@@ -79,16 +54,20 @@ public class GoFish {
                 currentPlayer.draw(cardAfter);
                 if (!card.sameTo(cardAfter)) {
                     count.next();
+                } else {
+                    print("Keep going");
                 }
             } else {
                 print("Keep going!");
             }
         }
+
+        announceWinner();
     }
 
     private boolean gameNotOver() {
         return players.stream().noneMatch(Player::hasNoCards)
-                || !deck.isEmpty();
+                && deck.isNotEmpty();
     }
 
 
@@ -102,6 +81,11 @@ public class GoFish {
 
 
         return card;
+    }
+
+    private void announceWinner() {
+        print("Congratulations ");
+        players.get(count.current()).print();
     }
 
     private void printPlayers() {

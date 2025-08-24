@@ -6,122 +6,54 @@ import domain.enums.Category;
 import domain.enums.Value;
 import domain.player.DropPlayer;
 import domain.player.Player;
-import effects.ChangeCategory;
-import effects.DrawFour;
-import effects.DrawTwo;
-import effects.Effect;
-import effects.Fold;
-import effects.PlayAgain;
-import effects.ReverseOrder;
-import effects.SkipNext;
+import effects.*;
 import util.Reader;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Anxiety {
     private static final Effect DRAW_TWO = new DrawTwo();
     private static final Effect DRAW_FOUR = new DrawFour();
     private static final Card FOLD_CARD = new Card(Value.FOLD, Category.FOLD);
+    private static final int NUMBER_OF_CARDS = 7;
     private final int NUMBER_OF_PLAYERS;
-    private final int NUMBER_OF_CARDS;
     private final CardEffects cardEffects;
-    private final Deque<Card> deck;
+    private final Deck deck;
     private final Deque<Card> played;
-    private final Deque<Player> players;
+    private Deque<Player> players;
     private Category lastPlayedCategory;
     private int cardsToDraw;
 
-    Anxiety(int numberOfPlayers, int numberOfCards) {
+    Anxiety(int numberOfPlayers) {
+        if (numberOfPlayers * NUMBER_OF_CARDS > 52) {
+            throw new IllegalStateException("Too many players or cards dealt to players. Max 52!");
+        }
+
         this.NUMBER_OF_PLAYERS = numberOfPlayers;
-        this.NUMBER_OF_CARDS = numberOfCards;
-        this.deck = new ArrayDeque<>();
-        this.played = new ArrayDeque<>();
-        this.players = new ArrayDeque<>();
         this.cardEffects = new CardEffects();
+        this.played = new ArrayDeque<>();
+        this.deck = new Deck(NUMBER_OF_CARDS, initPlayers());
 
-        if (numberOfPlayers * numberOfPlayers < 52) {
-            createCardEffects();
-            createDeck();
-            initPlayers();
+        createCardEffects();
 
-            dealInitialCards();
-            startGame();
-        } else {
-            System.out.println("Too many players or cards dealt to players. Max 52!");
-        }
+        playFirstCard();
+        startGame();
     }
 
-    private void createDeck() {
-        ArrayList<Card> tempList = new ArrayList<>(52);
 
-        for (Value val : Value.playableValues()) {
-            for (Category category : Category.playableValues()) {
-                tempList.add(new Card(val, category));
-            }
-        }
-
-        shuffle(tempList);
-    }
-
-    private void createCardEffects() {
-        cardEffects.add(Value.ACE, new ChangeCategory());
-        cardEffects.add(Value.TWO, new ReverseOrder());
-        cardEffects.add(Value.FOUR, DRAW_FOUR);
-        cardEffects.add(Value.SEVEN, DRAW_TWO);
-        cardEffects.add(Value.EIGHT, new PlayAgain());
-        cardEffects.add(Value.NINE, new SkipNext());
-        cardEffects.add(Value.FOLD, new Fold());
-    }
-
-    private void shuffle(List<Card> tempList) {
-        Collections.shuffle(tempList);
-        deck.clear();
-
-        deck.addAll(tempList);
-    }
-
-    private void initPlayers() {
+    private Collection<Player> initPlayers() {
+        this.players = new ArrayDeque<>(NUMBER_OF_PLAYERS);
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
             players.offer(new DropPlayer("Player " + (i + 1)));
         }
+
+        return this.players;
     }
 
-    private void dealInitialCards() {
-        for (int i = 0; i < NUMBER_OF_CARDS; i++) {
-            for (Player player : players) {
-                player.draw(deck.pop());
-            }
-        }
-
+    private void playFirstCard() {
         Card cardPlayed = deck.pop();
         this.played.push(cardPlayed);
         this.lastPlayedCategory = cardPlayed.getCategory();
-    }
-
-    public void drawCards(final int numberOfCards) {
-        if (deck.size() < numberOfCards) {
-            reshuffleDeck();
-        }
-
-        if (deck.size() < numberOfCards) {
-            print("Not enough cards played to re-deal the deck. It is a draw!");
-            System.exit(1);
-        }
-
-        Player player = players.element();
-        for (int i = 0; i < numberOfCards; i++) {
-            player.draw(deck.pop());
-        }
-    }
-
-    private void announceWinner() {
-        print("Congratulations ");
-        players.getLast().print();
     }
 
     private void startGame() {
@@ -140,9 +72,18 @@ public class Anxiety {
         announceWinner();
     }
 
+    private boolean gameNotOver() {
+        for (Player player : players) {
+            if (player.hasNoCards()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private Card resolveDrawPenalty() {
         Card card;
-        if (hasDrawCard() && Reader.readDrawTwo()) {
+        if (hasDrawCard() && Reader.readDraw()) {
             do {
                 print("Please play your draw card.");
                 card = selectCardToPlay();
@@ -181,16 +122,6 @@ public class Anxiety {
 
     }
 
-    public void play(Card card) {
-        players.element().play(card);
-        this.played.push(card);
-        this.lastPlayedCategory = card.getCategory();
-    }
-
-    public void advanceToNextPlayer() {
-        players.offer(players.remove());
-    }
-
     private Card selectCardToPlay() {
         Player player = players.element();
 
@@ -225,13 +156,43 @@ public class Anxiety {
                 || FOLD_CARD.sameTo(card);
     }
 
-    private boolean gameNotOver() {
-        for (Player player : players) {
-            if (player.hasNoCards()) {
-                return false;
-            }
+    private void announceWinner() {
+        print("Congratulations ");
+        players.getLast().print();
+    }
+
+    private void reshuffleDeck() {
+        Card lastPlayed = played.pop();
+        int size = played.size();
+
+        if (size < 1) {
+            print("Not enough cards played to re-deal the deck. It is a draw!");
+            System.exit(1);
         }
-        return true;
+
+        deck.shuffle(new ArrayList<>(played));
+        played.clear();
+        played.push(lastPlayed);
+    }
+
+    private void createCardEffects() {
+        cardEffects.add(Value.ACE, new ChangeCategory());
+        cardEffects.add(Value.TWO, new ReverseOrder());
+        cardEffects.add(Value.FOUR, DRAW_FOUR);
+        cardEffects.add(Value.SEVEN, DRAW_TWO);
+        cardEffects.add(Value.EIGHT, new PlayAgain());
+        cardEffects.add(Value.NINE, new SkipNext());
+        cardEffects.add(Value.FOLD, new Fold());
+    }
+
+    public void play(Card card) {
+        players.element().play(card);
+        this.played.push(card);
+        this.lastPlayedCategory = card.getCategory();
+    }
+
+    public void advanceToNextPlayer() {
+        players.offer(players.remove());
     }
 
     public void fold() {
@@ -248,20 +209,6 @@ public class Anxiety {
     public void draw(int cardsToDraw) {
         advanceToNextPlayer();
         this.cardsToDraw += cardsToDraw;
-    }
-
-    private void reshuffleDeck() {
-        Card lastPlayed = played.pop();
-        int size = played.size();
-
-        if (size < 1) {
-            print("Not enough cards played to re-deal the deck. It is a draw!");
-            System.exit(1);
-        }
-
-        shuffle(new ArrayList<>(played));
-        played.clear();
-        played.push(lastPlayed);
     }
 
     public void skipNextPlayer() {
@@ -288,10 +235,24 @@ public class Anxiety {
         advanceToNextPlayer();
     }
 
-    private void printDeck() {
-        for (Card card : deck) {
-            print(card.print());
+    public void drawCards(final int numberOfCards) {
+        if (deck.size() < numberOfCards) {
+            reshuffleDeck();
         }
+
+        if (deck.size() < numberOfCards) {
+            print("Not enough cards played to re-deal the deck. It is a draw!");
+            System.exit(1);
+        }
+
+        Player player = players.element();
+        for (int i = 0; i < numberOfCards; i++) {
+            player.draw(deck.pop());
+        }
+    }
+
+    private void printDeck() {
+        deck.print();
     }
 
     private void printPlayers() {
