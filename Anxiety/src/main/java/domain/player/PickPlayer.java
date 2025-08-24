@@ -16,12 +16,19 @@ public class PickPlayer implements Player {
     private int size = 0;
 
     public PickPlayer(String name) {
-        this.name = name;
+        this.name = validName(name);
         this.hand = new HashMap<>();
         for (Value value : Value.playableValues()) {
             hand.put(value, new HashSet<>(4));
         }
+    }
 
+    private String validName(String name) {
+        if (name == null || name.isEmpty() || name.isBlank()) {
+            throw new IllegalArgumentException(String.format("Given name: %s is not valid!", name));
+        }
+
+        return name;
     }
 
     @Override
@@ -74,6 +81,12 @@ public class PickPlayer implements Player {
     }
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    //TODO maybe change card print order? go with value first
+    @Override
     public void print() {
         System.out.println(name);
 
@@ -88,4 +101,15 @@ public class PickPlayer implements Player {
                 });
     }
 
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof PickPlayer that)) return false;
+
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

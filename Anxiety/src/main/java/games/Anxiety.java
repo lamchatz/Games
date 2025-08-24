@@ -51,7 +51,7 @@ public class Anxiety {
     }
 
     private void playFirstCard() {
-        Card cardPlayed = deck.pop();
+        Card cardPlayed = deck.top();
         this.played.push(cardPlayed);
         this.lastPlayedCategory = cardPlayed.getCategory();
     }
@@ -247,7 +247,7 @@ public class Anxiety {
 
         Player player = players.element();
         for (int i = 0; i < numberOfCards; i++) {
-            player.draw(deck.pop());
+            player.draw(deck.top());
         }
     }
 

@@ -10,13 +10,13 @@ import java.util.*;
 public class Deck {
     private final Deque<Card> cards;
 
-    Deck(int numberOfCards, Collection<Player> players) {
+    Deck(int numberOfCards, Collection<? extends Player> players) {
         this.cards = new ArrayDeque<>();
         create();
         deal(numberOfCards, players);
     }
 
-    void create() {
+    private void create() {
         List<Card> tempList = new ArrayList<>(52);
 
         for (Value val : Value.playableValues()) {
@@ -28,6 +28,17 @@ public class Deck {
         shuffle(tempList);
     }
 
+    void deal(int numberOfCards, Collection<? extends Player> players) {
+        for (int i = 0; i < numberOfCards; i++) {
+            for (Player player : players) {
+                if (cards.isEmpty()) {
+                    break;
+                }
+                player.draw(cards.pop());
+            }
+        }
+    }
+
     void shuffle(List<Card> tempList) {
         Collections.shuffle(tempList);
         cards.clear();
@@ -36,7 +47,7 @@ public class Deck {
         tempList.clear();
     }
 
-    Card pop() {
+    Card top() {
         return this.cards.pop();
     }
 
@@ -54,13 +65,21 @@ public class Deck {
         return !cards.isEmpty();
     }
 
-    private void deal(int numberOfCards, Collection<Player> players) {
-        for (int i = 0; i < numberOfCards; i++) {
-            for (Player player : players) {
-                player.draw(cards.pop());
-            }
+    Deque<Card> dealPlayedCards() {
+        if (size() == 0) {
+            return new ArrayDeque<>();
         }
+
+        Deque<Card> played = new ArrayDeque<>(4);
+        for (int i = 0; i < 4; i++) {
+            played.push(cards.pop());
+        }
+
+        return played;
     }
+
+
+
 
 
 }

@@ -3,7 +3,6 @@ package domain.player;
 import domain.Card;
 import domain.enums.Value;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -15,7 +14,15 @@ public class DropPlayer implements Player {
 
     public DropPlayer(String name) {
         this.hand = new TreeSet<>();
-        this.name = Objects.requireNonNull(name);
+        this.name = validName(name);
+    }
+
+    private String validName(String name) {
+        if (name == null || name.isEmpty() || name.isBlank()) {
+            throw new IllegalArgumentException(String.format("Given name: %s is not valid!", name));
+        }
+
+        return name;
     }
 
     @Override
@@ -42,6 +49,11 @@ public class DropPlayer implements Player {
     public Card play(Card card) {
         this.hand.remove(card);
         return card;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

@@ -49,7 +49,7 @@ public class GoFish {
 
             if (!gotCards) {
                 print("Go Fish!");
-                Card cardAfter = deck.pop();
+                Card cardAfter = deck.top();
                 print(String.format("You got %s", cardAfter.print()));
                 currentPlayer.draw(cardAfter);
                 if (!card.sameTo(cardAfter)) {

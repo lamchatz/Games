@@ -5,9 +5,10 @@ import domain.enums.Value;
 
 public interface Player {
     void draw(Card card);
+    Card play(Card card);
     boolean has(Card card);
     boolean has(Value value);
     boolean hasNoCards();
-    Card play(Card card);
+    String getName();
     void print();
 }
