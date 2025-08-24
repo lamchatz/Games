@@ -3,6 +3,7 @@ package domain.enums;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public enum Value {
 
@@ -47,6 +48,10 @@ public enum Value {
 
     public static List<Value> playableValues() {
         return Arrays.asList(ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING);
+    }
+
+    public static Set<Value> getFigures() {
+        return Set.of(JACK, QUEEN, KING, ACE);
     }
 
     @Override
