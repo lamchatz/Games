@@ -4,6 +4,6 @@ public class Main {
     public static void main(String[] args) {
         //new Anxiety(2);
         //new GoFish(2);
-        new Kseri();
+        new Kseri(2, 2, 50);
     }
 }

@@ -51,7 +51,7 @@ public class Anxiety {
     }
 
     private void playFirstCard() {
-        Card cardPlayed = deck.top();
+        Card cardPlayed = deck.draw();
         this.played.push(cardPlayed);
         this.lastPlayedCategory = cardPlayed.getCategory();
     }
@@ -235,6 +235,7 @@ public class Anxiety {
         advanceToNextPlayer();
     }
 
+    //TODO losing cards
     public void drawCards(final int numberOfCards) {
         if (deck.size() < numberOfCards) {
             reshuffleDeck();
@@ -247,7 +248,7 @@ public class Anxiety {
 
         Player player = players.element();
         for (int i = 0; i < numberOfCards; i++) {
-            player.draw(deck.top());
+            player.draw(deck.draw());
         }
     }
 
