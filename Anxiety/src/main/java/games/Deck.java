@@ -5,18 +5,27 @@ import domain.enums.Category;
 import domain.enums.Value;
 import domain.player.Player;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
 
 public class Deck {
     private final Deque<Card> cards;
 
+    Deck() {
+        this.cards = new ArrayDeque<>(52);
+    }
+
     Deck(int numberOfCards, Collection<? extends Player> players) {
-        this.cards = new ArrayDeque<>();
-        create();
+        this();
+        populate();
         deal(numberOfCards, players);
     }
 
-    private void create() {
+    private void populate() {
         List<Card> tempList = new ArrayList<>(52);
 
         for (Value val : Value.playableValues()) {
@@ -28,26 +37,46 @@ public class Deck {
         shuffle(tempList);
     }
 
+    private Deque<Card> dealPlayedCards() {
+        if (size() == 0) {
+            return new ArrayDeque<>();
+        }
+
+        Deque<Card> played = new ArrayDeque<>(4);
+        for (int i = 0; i < 4 && isNotEmpty(); i++) {
+            played.push(cards.pop());
+        }
+
+        return played;
+    }
+
+    void prepareForNewGame(int numberOfCards, Collection<? extends Player> players, Deque<Card> played) {
+        cards.clear();
+        populate();
+        deal(numberOfCards, players);
+        played.addAll(dealPlayedCards());
+    }
+
     void deal(int numberOfCards, Collection<? extends Player> players) {
         for (int i = 0; i < numberOfCards; i++) {
             for (Player player : players) {
                 if (cards.isEmpty()) {
                     break;
                 }
-                player.draw(cards.pop());
+                player.draw(draw());
             }
         }
     }
 
     void shuffle(List<Card> tempList) {
+        //tempList.addAll(cards);
         Collections.shuffle(tempList);
         cards.clear();
 
         cards.addAll(tempList);
-        tempList.clear();
     }
 
-    Card top() {
+    Card draw() {
         return this.cards.pop();
     }
 
@@ -55,31 +84,13 @@ public class Deck {
         return cards.size();
     }
 
+    boolean isNotEmpty() {
+        return !cards.isEmpty();
+    }
+
     void print() {
         for (Card card : cards) {
             System.out.println(card.print());
         }
     }
-
-    boolean isNotEmpty() {
-        return !cards.isEmpty();
-    }
-
-    Deque<Card> dealPlayedCards() {
-        if (size() == 0) {
-            return new ArrayDeque<>();
-        }
-
-        Deque<Card> played = new ArrayDeque<>(4);
-        for (int i = 0; i < 4; i++) {
-            played.push(cards.pop());
-        }
-
-        return played;
-    }
-
-
-
-
-
 }
