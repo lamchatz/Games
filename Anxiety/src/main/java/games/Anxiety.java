@@ -6,10 +6,21 @@ import domain.enums.Category;
 import domain.enums.Value;
 import domain.player.DropPlayer;
 import domain.player.Player;
-import effects.*;
+import effects.ChangeCategory;
+import effects.DrawFour;
+import effects.DrawTwo;
+import effects.Effect;
+import effects.Fold;
+import effects.PlayAgain;
+import effects.ReverseOrder;
+import effects.SkipNext;
 import util.Reader;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.Optional;
 
 public class Anxiety {
     private static final Effect DRAW_TWO = new DrawTwo();
@@ -87,7 +98,7 @@ public class Anxiety {
             do {
                 print("Please play your draw card.");
                 card = selectCardToPlay();
-            } while (!isDrawCard(card));
+            } while (!(isDrawCard(card) || canPlayCard(card)));
         } else {
             drawCards(cardsToDraw);
             cardsToDraw = 0;
@@ -97,18 +108,27 @@ public class Anxiety {
         return card;
     }
 
-    private boolean hasDrawTwoCard() {
-        Optional<Value> drawTwo = cardEffects.getValueWith(DRAW_TWO);
-        return drawTwo.isPresent() && players.element().has(drawTwo.get());
-    }
+    private boolean hasDrawCard(Effect drawEffect) {
+        Optional<Value> drawEffectOptionalValue = cardEffects.getValueWith(drawEffect);
 
-    private boolean hasDrawFourCard() {
-        Optional<Value> drawFour = cardEffects.getValueWith(DRAW_FOUR);
-        return drawFour.isPresent() && players.element().has(drawFour.get());
+        if (drawEffectOptionalValue.isEmpty()) {
+            return false;
+        }
+
+        Player player = players.element();
+        Value drawEffectValue = drawEffectOptionalValue.get();
+        for (Category category : Category.playableValues()) {
+            Card card = new Card(drawEffectValue, category);
+            if (player.has(card) && canPlayCard(card)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean hasDrawCard() {
-        return hasDrawTwoCard() || hasDrawFourCard();
+        return hasDrawCard(DRAW_TWO) || hasDrawCard(DRAW_FOUR);
     }
 
     private boolean isDrawCard(Card card) {
@@ -156,23 +176,14 @@ public class Anxiety {
                 || FOLD_CARD.sameTo(card);
     }
 
-    private void announceWinner() {
-        print("Congratulations ");
-        players.getLast().print();
+    public void play(Card card) {
+        players.element().play(card);
+        this.played.push(card);
+        this.lastPlayedCategory = card.getCategory();
     }
 
-    private void reshuffleDeck() {
-        Card lastPlayed = played.pop();
-        int size = played.size();
-
-        if (size < 1) {
-            print("Not enough cards played to re-deal the deck. It is a draw!");
-            System.exit(1);
-        }
-
-        deck.shuffle(new ArrayList<>(played));
-        played.clear();
-        played.push(lastPlayed);
+    public void advanceToNextPlayer() {
+        players.offer(players.remove());
     }
 
     private void createCardEffects() {
@@ -183,16 +194,6 @@ public class Anxiety {
         cardEffects.add(Value.EIGHT, new PlayAgain());
         cardEffects.add(Value.NINE, new SkipNext());
         cardEffects.add(Value.FOLD, new Fold());
-    }
-
-    public void play(Card card) {
-        players.element().play(card);
-        this.played.push(card);
-        this.lastPlayedCategory = card.getCategory();
-    }
-
-    public void advanceToNextPlayer() {
-        players.offer(players.remove());
     }
 
     public void fold() {
@@ -235,7 +236,6 @@ public class Anxiety {
         advanceToNextPlayer();
     }
 
-    //TODO losing cards
     public void drawCards(final int numberOfCards) {
         if (deck.size() < numberOfCards) {
             reshuffleDeck();
@@ -250,6 +250,25 @@ public class Anxiety {
         for (int i = 0; i < numberOfCards; i++) {
             player.draw(deck.draw());
         }
+    }
+
+    private void reshuffleDeck() {
+        Card lastPlayed = played.pop();
+        int size = played.size();
+
+        if (size < 1) {
+            print("Not enough cards played to re-deal the deck. It is a draw!");
+            System.exit(1);
+        }
+
+        deck.shuffle(new ArrayList<>(played));
+        played.clear();
+        played.push(lastPlayed);
+    }
+
+    private void announceWinner() {
+        print("Congratulations ");
+        players.getLast().print();
     }
 
     private void printDeck() {

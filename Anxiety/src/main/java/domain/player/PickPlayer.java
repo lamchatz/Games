@@ -85,7 +85,6 @@ public class PickPlayer implements Player {
         return name;
     }
 
-    //TODO maybe change card print order? go with value first
     @Override
     public void print() {
         System.out.println(name);

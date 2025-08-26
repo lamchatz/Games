@@ -58,18 +58,18 @@ public class Deck {
     }
 
     void deal(int numberOfCards, Collection<? extends Player> players) {
-        for (int i = 0; i < numberOfCards; i++) {
-            for (Player player : players) {
-                if (cards.isEmpty()) {
-                    break;
-                }
-                player.draw(draw());
-            }
-        }
+//        for (int i = 0; i < numberOfCards; i++) {
+//            for (Player player : players) {
+//                if (cards.isEmpty()) {
+//                    break;
+//                }
+//                player.draw(draw());
+//            }
+//        }
     }
 
     void shuffle(List<Card> tempList) {
-        //tempList.addAll(cards);
+        tempList.addAll(cards);
         Collections.shuffle(tempList);
         cards.clear();
 
