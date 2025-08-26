@@ -1,7 +1,8 @@
-package domain.player;
+package domain.player.implementation;
 
 import domain.Card;
 import domain.enums.Value;
+import domain.player.declaration.Player;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -47,6 +48,11 @@ public class DropPlayer implements Player {
     @Override
     public boolean hasNoCards() {
         return this.hand.isEmpty();
+    }
+
+    @Override
+    public int numberOfCards() {
+        return this.hand.size();
     }
 
     @Override

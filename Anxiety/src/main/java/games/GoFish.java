@@ -2,8 +2,8 @@ package games;
 
 import domain.Card;
 import domain.Count;
-import domain.player.PickPlayer;
-import domain.player.Player;
+import domain.player.declaration.Player;
+import domain.player.implementation.PickPlayer;
 import util.Reader;
 
 import java.util.ArrayList;

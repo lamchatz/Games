@@ -1,6 +1,6 @@
 package domain;
 
-import domain.player.ScoringPlayer;
+import domain.player.declaration.ScoringPlayer;
 
 import java.util.HashSet;
 import java.util.Set;

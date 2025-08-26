@@ -1,8 +1,9 @@
-package domain.player;
+package domain.player.implementation;
 
 import domain.Card;
 import domain.enums.Category;
 import domain.enums.Value;
+import domain.player.declaration.ScoringPlayer;
 
 import java.util.Collection;
 import java.util.Comparator;

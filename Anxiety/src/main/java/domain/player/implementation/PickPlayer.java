@@ -1,7 +1,8 @@
-package domain.player;
+package domain.player.implementation;
 
 import domain.Card;
 import domain.enums.Value;
+import domain.player.declaration.Player;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,6 +61,11 @@ public class PickPlayer implements Player {
     @Override
     public boolean hasNoCards() {
         return size == 0;
+    }
+
+    @Override
+    public int numberOfCards() {
+        return size;
     }
 
     @Override

@@ -3,9 +3,9 @@ package games;
 import domain.Card;
 import domain.Team;
 import domain.enums.Value;
-import domain.player.GatherPlayer;
-import domain.player.Player;
-import domain.player.ScoringPlayer;
+import domain.player.implementation.GatherPlayer;
+import domain.player.declaration.Player;
+import domain.player.declaration.ScoringPlayer;
 import util.Reader;
 
 import java.util.ArrayDeque;

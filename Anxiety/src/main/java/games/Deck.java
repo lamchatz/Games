@@ -3,7 +3,7 @@ package games;
 import domain.Card;
 import domain.enums.Category;
 import domain.enums.Value;
-import domain.player.Player;
+import domain.player.declaration.Player;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
