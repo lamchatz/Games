@@ -1,6 +1,7 @@
 package games;
 
 import domain.Card;
+import domain.Team;
 import domain.enums.Value;
 import domain.player.GatherPlayer;
 import domain.player.Player;
@@ -8,9 +9,12 @@ import domain.player.ScoringPlayer;
 import util.Reader;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -21,16 +25,18 @@ public class Kseri {
     private static final String PLEASE_SELECT_A_CARD_FROM_YOUR_HAND = "Please select a card from your hand.";
     private static final String CONGRATULATIONS = "Congratulations";
     private static final String PLAYER = "Player ";
-    private final int numberOfPlayers;
-    private final int numberOfTeams;
-    private final int targetScore;
     private final Deck deck;
     private final Deque<Card> played;
+    private final List<Team> teams;
     private Deque<ScoringPlayer> players;
     private ScoringPlayer lastPlayerToGather;
-    private ScoringPlayer leadingPlayer;
-    private int maxScore;
+    private Team leadingTeam;
+    private int maxTeamScore;
+    private final int numberOfPlayers;
+    private final int targetScore;
+    private final int numberOfTeams;
     private boolean gameNotOver;
+
 
     Kseri(final int numberOfPlayers, final int numberOfTeams, final int targetScore) {
         if (numberOfPlayers < 2) {
@@ -41,11 +47,14 @@ public class Kseri {
             throw new IllegalArgumentException("Not sufficient teams for Kseri, at least 2 needed");
         }
 
+        if (numberOfPlayers % numberOfTeams != 0) {
+            throw new IllegalArgumentException(String.format("Teams must have the same number of players. You've given %d teams and %d players", numberOfTeams, numberOfPlayers));
+        }
+
         if (targetScore < 25) {
             throw new IllegalArgumentException("Target score should be above 25");
         }
 
-        this.maxScore = 0;
         this.gameNotOver = true;
 
         this.numberOfPlayers = numberOfPlayers;
@@ -53,10 +62,12 @@ public class Kseri {
         this.targetScore = targetScore;
 
         this.players = new ArrayDeque<>();
+        this.teams = new ArrayList<>();
         this.played = new ArrayDeque<>();
         this.deck = new Deck();
         this.deck.prepareForNewGame(NUMBER_OF_CARDS, initPlayers(), played);
 
+        createTeams();
         startGame();
     }
 
@@ -69,7 +80,25 @@ public class Kseri {
         return players;
     }
 
-    //TODO team score, +3 for player with most cards
+    private void createTeams() {
+        int teamPlayers = numberOfPlayers / numberOfTeams;
+
+        for (int i = 0; i < numberOfTeams; i++) {
+            teams.add(new Team("Team " + (i + 1), teamPlayers));
+        }
+
+        int j = 0;
+        while (j < teamPlayers) {
+            for (Team team : teams) {
+                ScoringPlayer player = players.remove();
+                players.offer(player);
+                team.add(player);
+            }
+            j++;
+        }
+
+    }
+
     private void startGame() {
         do {
             startRound();
@@ -133,7 +162,7 @@ public class Kseri {
     private Predicate<Card> jackpotPredicate(Card card) {
         if (card.hasValue(Value.JACK)) {
             return this::isJackJackpot;
-        } else  {
+        } else {
             return this::isNormalJackpot;
         }
     }
@@ -154,7 +183,7 @@ public class Kseri {
             player.gather(played);
         }
 
-        updateScore(player);
+        updateMaxScore(player);
         lastPlayerToGather = player;
     }
 
@@ -170,30 +199,34 @@ public class Kseri {
             print(String.format(LAST_PLAYER_TO_GATHER_WAS_PLAYER_HE_GATHERS_NOW, lastPlayerToGather.getName()));
             lastPlayerToGather.gather(played);
 
-            updateScore(lastPlayerToGather);
+            updateMaxScore(lastPlayerToGather);
         }
     }
 
     private void attributePointsForMostCards() {
         players.stream().max(Comparator.comparingInt(ScoringPlayer::totalCardsGathered)).ifPresent(player -> {
             player.addMostCardsGatheredPoints();
-            updateScore(player);
+            updateMaxScore(player);
         });
 
     }
 
-    private void updateScore(ScoringPlayer player) {
+    private void updateMaxScore(ScoringPlayer player) {
         played.clear();
 
-        int playerScore = player.totalScore();
+        Optional<Team> teamOptional = teams.stream().filter(t -> t.has(player)).findFirst();
 
-        if (playerScore > maxScore) {
-            leadingPlayer = player;
-            maxScore = playerScore;
+        if (teamOptional.isEmpty()) {
+            throw new IllegalStateException(String.format("Player %s does not belong to any team for what ever reason", player.getName()));
+        }
+        Team team = teamOptional.get();
 
-            if (playerScore >= targetScore) {
-                gameNotOver = false;
-            }
+        int teamTotalScore = team.getTotalScore();
+        if (teamTotalScore > maxTeamScore) {
+            maxTeamScore = teamTotalScore;
+            leadingTeam = team;
+
+            gameNotOver = targetScore > teamTotalScore;
         }
     }
 
@@ -206,7 +239,7 @@ public class Kseri {
 
     private void announceWinner() {
         print(CONGRATULATIONS);
-        print(String.format("%s: %d", leadingPlayer.getName(), maxScore));
+        leadingTeam.print();
     }
 
     private void print(Object msg) {
