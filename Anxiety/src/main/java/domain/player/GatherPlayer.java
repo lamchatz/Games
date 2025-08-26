@@ -12,10 +12,12 @@ public class GatherPlayer extends DropPlayer implements ScoringPlayer {
     private static final Set<Card> EXTRA = Set.of(new Card(Value.TEN, Category.DIAMOND), new Card(Value.TWO, Category.SPADES));
 
     private int score;
+    private int cardsGathered;
 
     public GatherPlayer(String name) {
         super(name);
         score = 0;
+        cardsGathered = 0;
     }
 
     @Override
@@ -32,6 +34,7 @@ public class GatherPlayer extends DropPlayer implements ScoringPlayer {
             }
         }
 
+        cardsGathered += cards.size();
         System.out.println(i + " points gathered");
     }
 
@@ -43,11 +46,23 @@ public class GatherPlayer extends DropPlayer implements ScoringPlayer {
         } else {
             score += 10;
         }
+
+        cardsGathered += 2;
     }
 
     @Override
     public int totalScore() {
         return score;
+    }
+
+    @Override
+    public int totalCardsGathered() {
+        return cardsGathered;
+    }
+
+    @Override
+    public void addMostCardsGatheredPoints() {
+        score += 3;
     }
 
     @Override

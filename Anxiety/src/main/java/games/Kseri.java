@@ -9,6 +9,7 @@ import util.Reader;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -101,6 +102,7 @@ public class Kseri {
         }
 
         gatherScraps();
+        attributePointsForMostCards();
     }
 
     private boolean gameNotOver() {
@@ -135,6 +137,7 @@ public class Kseri {
             return this::isNormalJackpot;
         }
     }
+
     private boolean isJackJackpot(Card card) {
         return played.size() == 1 && played.peek().hasValue(Value.JACK);
     }
@@ -155,6 +158,10 @@ public class Kseri {
         lastPlayerToGather = player;
     }
 
+    private void advanceToNextPlayer() {
+        players.offer(players.remove());
+    }
+
     private void gatherScraps() {
         if (lastPlayerToGather == null) {
             print("Somehow nobody gathered anything... so nobody gets the points");
@@ -167,8 +174,12 @@ public class Kseri {
         }
     }
 
-    private void advanceToNextPlayer() {
-        players.offer(players.remove());
+    private void attributePointsForMostCards() {
+        players.stream().max(Comparator.comparingInt(ScoringPlayer::totalCardsGathered)).ifPresent(player -> {
+            player.addMostCardsGatheredPoints();
+            updateScore(player);
+        });
+
     }
 
     private void updateScore(ScoringPlayer player) {
@@ -179,7 +190,6 @@ public class Kseri {
         if (playerScore > maxScore) {
             leadingPlayer = player;
             maxScore = playerScore;
-            print(String.format("New leading player %s with %d points", leadingPlayer.getName(), maxScore));
 
             if (playerScore >= targetScore) {
                 gameNotOver = false;

@@ -10,4 +10,6 @@ public interface ScoringPlayer extends Player {
     void jackPot(Card card);
 
     int totalScore();
+    int totalCardsGathered();
+    void addMostCardsGatheredPoints();
 }
