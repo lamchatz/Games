@@ -5,17 +5,21 @@ import domain.enums.Category;
 import domain.enums.Value;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Set;
 
 public class GatherPlayer extends DropPlayer implements ScoringPlayer {
+    private static final Comparator<Card> VALUE_COMPARATOR =
+            Comparator.comparing(Card::getValue)
+                    .thenComparing(Card::getCategory);
     private static final Set<Value> FIGURES = Value.getFigures();
     private static final Set<Card> EXTRA = Set.of(new Card(Value.TEN, Category.DIAMOND), new Card(Value.TWO, Category.SPADES));
 
     private int score;
-    private int cardsGathered;
 
+    private int cardsGathered;
     public GatherPlayer(String name) {
-        super(name);
+        super(name, VALUE_COMPARATOR);
         score = 0;
         cardsGathered = 0;
     }

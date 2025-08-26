@@ -3,6 +3,7 @@ package domain.player;
 import domain.Card;
 import domain.enums.Value;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -11,14 +12,17 @@ public class DropPlayer implements Player {
     private final Set<Card> hand;
     private final String name;
 
-
     public DropPlayer(String name) {
-        this.hand = new TreeSet<>();
+        this(name, Comparator.naturalOrder());
+    }
+
+    protected DropPlayer(String name, Comparator<Card> comparator) {
+        this.hand = new TreeSet<>(comparator);
         this.name = validName(name);
     }
 
-    private String validName(String name) {
-        if (name == null || name.isEmpty() || name.isBlank()) {
+    protected String validName(String name) {
+        if (name == null || name.isBlank()) {
             throw new IllegalArgumentException(String.format("Given name: %s is not valid!", name));
         }
 
@@ -84,7 +88,7 @@ public class DropPlayer implements Player {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("Player{");
+        final StringBuilder sb = new StringBuilder("Player{");
         sb.append("hand=").append(hand);
         sb.append(", name='").append(name).append('\'');
         sb.append('}');

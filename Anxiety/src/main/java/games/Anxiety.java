@@ -16,7 +16,7 @@ public class Anxiety {
     private static final Effect DRAW_FOUR = new DrawFour();
     private static final Card FOLD_CARD = new Card(Value.FOLD, Category.FOLD);
     private static final int NUMBER_OF_CARDS = 7;
-    private final int NUMBER_OF_PLAYERS;
+    private final int numberOfPlayers;
     private final CardEffects cardEffects;
     private final Deck deck;
     private final Deque<Card> played;
@@ -29,7 +29,7 @@ public class Anxiety {
             throw new IllegalStateException("Too many players or cards dealt to players. Max 52!");
         }
 
-        this.NUMBER_OF_PLAYERS = numberOfPlayers;
+        this.numberOfPlayers = numberOfPlayers;
         this.cardEffects = new CardEffects();
         this.played = new ArrayDeque<>();
         this.deck = new Deck(NUMBER_OF_CARDS, initPlayers());
@@ -42,8 +42,8 @@ public class Anxiety {
 
 
     private Collection<Player> initPlayers() {
-        this.players = new ArrayDeque<>(NUMBER_OF_PLAYERS);
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
+        this.players = new ArrayDeque<>(numberOfPlayers);
+        for (int i = 0; i < numberOfPlayers; i++) {
             players.offer(new DropPlayer("Player " + (i + 1)));
         }
 

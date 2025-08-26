@@ -11,23 +11,23 @@ import java.util.Collection;
 import java.util.List;
 
 public class GoFish {
-    private final int NUMBER_OF_PLAYERS;
+    private final int numberOfPlayers;
     private static final int NUMBER_OF_CARDS = 15;
     private final Deck deck;
     private List<Player> players;
     private final Count count;
 
     public GoFish(final int  numberOfPlayers) {
-        this.NUMBER_OF_PLAYERS = numberOfPlayers;
-        this.count = new Count(NUMBER_OF_PLAYERS);
+        this.numberOfPlayers = numberOfPlayers;
+        this.count = new Count(this.numberOfPlayers);
         this.deck = new Deck(NUMBER_OF_CARDS, initPlayers());
 
         startGame();
     }
 
     private Collection<Player> initPlayers() {
-        this.players = new ArrayList<>(NUMBER_OF_PLAYERS);
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
+        this.players = new ArrayList<>(numberOfPlayers);
+        for (int i = 0; i < numberOfPlayers; i++) {
             players.add(new PickPlayer("Player " + (i + 1)));
         }
 
@@ -39,7 +39,7 @@ public class GoFish {
             Player currentPlayer = players.get(count.current());
             currentPlayer.print();
             Card card = selectCardToPlay();
-            Player playerToAsk = players.get(Reader.askPlayer(NUMBER_OF_PLAYERS, count.current()));
+            Player playerToAsk = players.get(Reader.askPlayer(numberOfPlayers, count.current()));
 
             boolean gotCards = false;
             while (playerToAsk.has(card)) {
