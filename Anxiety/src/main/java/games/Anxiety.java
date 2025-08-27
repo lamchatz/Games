@@ -4,8 +4,8 @@ import domain.Card;
 import domain.CardEffects;
 import domain.enums.Category;
 import domain.enums.Value;
-import domain.player.implementation.DropPlayer;
 import domain.player.declaration.Player;
+import domain.player.implementation.DropPlayer;
 import effects.ChangeCategory;
 import effects.DrawFour;
 import effects.DrawTwo;
@@ -41,9 +41,9 @@ public class Anxiety {
         }
 
         this.numberOfPlayers = numberOfPlayers;
-        this.cardEffects = new CardEffects();
-        this.played = new ArrayDeque<>();
-        this.deck = new Deck(NUMBER_OF_CARDS, initPlayers());
+        cardEffects = new CardEffects();
+        played = new ArrayDeque<>();
+        deck = new Deck(NUMBER_OF_CARDS, initPlayers());
 
         createCardEffects();
 
@@ -53,18 +53,18 @@ public class Anxiety {
 
 
     private Collection<Player> initPlayers() {
-        this.players = new ArrayDeque<>(numberOfPlayers);
+        players = new ArrayDeque<>(numberOfPlayers);
         for (int i = 0; i < numberOfPlayers; i++) {
             players.offer(new DropPlayer("Player " + (i + 1)));
         }
 
-        return this.players;
+        return players;
     }
 
     private void playFirstCard() {
         Card cardPlayed = deck.draw();
-        this.played.push(cardPlayed);
-        this.lastPlayedCategory = cardPlayed.getCategory();
+        played.push(cardPlayed);
+        lastPlayedCategory = cardPlayed.getCategory();
     }
 
     private void startGame() {
@@ -178,8 +178,8 @@ public class Anxiety {
 
     public void play(Card card) {
         players.element().play(card);
-        this.played.push(card);
-        this.lastPlayedCategory = card.getCategory();
+        played.push(card);
+        lastPlayedCategory = card.getCategory();
     }
 
     public void advanceToNextPlayer() {
@@ -230,8 +230,8 @@ public class Anxiety {
     }
 
     public void changeCategory(Card card) {
-        this.played.push(card);
-        this.players.element().play(card);
+        played.push(card);
+        players.element().play(card);
         lastPlayedCategory = Reader.readCategory();
         advanceToNextPlayer();
     }
@@ -282,7 +282,7 @@ public class Anxiety {
     private void printLastPlayed() {
         printEmptyLines();
 
-        Card card = this.played.element();
+        Card card = played.element();
 
         if (card.hasValue(Value.ACE)) {
             print(String.format("Last played: %s (%s)", card.print(), lastPlayedCategory));

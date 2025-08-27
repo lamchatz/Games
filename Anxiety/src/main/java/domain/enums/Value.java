@@ -54,6 +54,10 @@ public enum Value {
         return Set.of(TEN, JACK, QUEEN, KING, ACE);
     }
 
+    public static List<Value> noFigures() {
+        return Arrays.asList(ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN);
+    }
+
     @Override
     public String toString() {
         switch (val) {

@@ -16,7 +16,7 @@ public class Deck {
     private final Deque<Card> cards;
 
     Deck() {
-        this.cards = new ArrayDeque<>(52);
+        cards = new ArrayDeque<>(52);
     }
 
     Deck(int numberOfCards, Collection<? extends Player> players) {
@@ -58,14 +58,14 @@ public class Deck {
     }
 
     void deal(int numberOfCards, Collection<? extends Player> players) {
-//        for (int i = 0; i < numberOfCards; i++) {
-//            for (Player player : players) {
-//                if (cards.isEmpty()) {
-//                    break;
-//                }
-//                player.draw(draw());
-//            }
-//        }
+        for (int i = 0; i < numberOfCards; i++) {
+            for (Player player : players) {
+                if (cards.isEmpty()) {
+                    break;
+                }
+                player.draw(draw());
+            }
+        }
     }
 
     void shuffle(List<Card> tempList) {
@@ -77,7 +77,7 @@ public class Deck {
     }
 
     Card draw() {
-        return this.cards.pop();
+        return cards.pop();
     }
 
     int size() {
@@ -91,6 +91,37 @@ public class Deck {
     void print() {
         for (Card card : cards) {
             System.out.println(card.print());
+        }
+    }
+
+    static void dealCardsTo(Collection<? extends Player> players) {
+        Deck d = new Deck();
+        d.populateWithNoFigures();
+        d.dealAll(players);
+    }
+
+    private void populateWithNoFigures() {
+        List<Card> tempList = new ArrayList<>(41);
+
+        for (Value val : Value.noFigures()) {
+            for (Category category : Category.playableValues()) {
+                tempList.add(new Card(val, category));
+            }
+        }
+
+        tempList.add(new Card(Value.KING, Category.SPADES));
+
+        shuffle(tempList);
+    }
+
+    private void dealAll(Collection<? extends Player> players) {
+        while (!cards.isEmpty()) {
+            for (Player player : players) {
+                if (cards.isEmpty()) {
+                    break; // stop if deck ran out during this round
+                }
+                player.draw(draw());
+            }
         }
     }
 }

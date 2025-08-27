@@ -3,9 +3,9 @@ package games;
 import domain.Card;
 import domain.Team;
 import domain.enums.Value;
-import domain.player.implementation.GatherPlayer;
 import domain.player.declaration.Player;
 import domain.player.declaration.ScoringPlayer;
+import domain.player.implementation.GatherPlayer;
 import util.Reader;
 
 import java.util.ArrayDeque;
@@ -55,24 +55,24 @@ public class Kseri {
             throw new IllegalArgumentException("Target score should be above 25");
         }
 
-        this.gameNotOver = true;
+        gameNotOver = true;
 
         this.numberOfPlayers = numberOfPlayers;
         this.numberOfTeams = numberOfTeams;
         this.targetScore = targetScore;
 
-        this.players = new ArrayDeque<>();
-        this.teams = new ArrayList<>();
-        this.played = new ArrayDeque<>();
-        this.deck = new Deck();
-        this.deck.prepareForNewGame(NUMBER_OF_CARDS, initPlayers(), played);
+        players = new ArrayDeque<>(numberOfPlayers);
+        teams = new ArrayList<>(numberOfTeams);
+        played = new ArrayDeque<>();
+        deck = new Deck();
+        deck.prepareForNewGame(NUMBER_OF_CARDS, initPlayers(), played);
 
         createTeams();
         startGame();
     }
 
     private Collection<ScoringPlayer> initPlayers() {
-        this.players = new ArrayDeque<>(numberOfPlayers);
+        players = new ArrayDeque<>(numberOfPlayers);
         for (int i = 0; i < numberOfPlayers; i++) {
             players.offer(new GatherPlayer(PLAYER + (i + 1)));
         }

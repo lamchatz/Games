@@ -16,4 +16,8 @@ public class Count {
     public int current() {
         return counter;
     }
+
+    public int previous() {
+        return (counter - 1 + players) % players;
+    }
 }

@@ -17,21 +17,21 @@ public class GoFish {
     private List<Player> players;
     private final Count count;
 
-    public GoFish(final int  numberOfPlayers) {
+    public GoFish(final int numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
-        this.count = new Count(this.numberOfPlayers);
-        this.deck = new Deck(NUMBER_OF_CARDS, initPlayers());
+        count = new Count(numberOfPlayers);
+        deck = new Deck(NUMBER_OF_CARDS, initPlayers());
 
         startGame();
     }
 
     private Collection<Player> initPlayers() {
-        this.players = new ArrayList<>(numberOfPlayers);
+        players = new ArrayList<>(numberOfPlayers);
         for (int i = 0; i < numberOfPlayers; i++) {
             players.add(new PickPlayer("Player " + (i + 1)));
         }
 
-        return this.players;
+        return players;
     }
 
     private void startGame() {

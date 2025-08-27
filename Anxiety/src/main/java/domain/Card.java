@@ -34,7 +34,7 @@ public class Card implements Comparable<Card> {
             return false;
         }
 
-        return this.getValue().equals(card.getValue());
+        return getValue().equals(card.getValue());
     }
 
     public boolean hasValue(Value value) {
@@ -73,13 +73,13 @@ public class Card implements Comparable<Card> {
 
     @Override
     public int compareTo(Card other) {
-        int catComp = this.getCategory().compareTo(other.getCategory());
+        int catComp = getCategory().compareTo(other.getCategory());
 
         if (catComp != 0) {
             return catComp;
         }
 
-        int thisVal = this.getValue().getVal();
+        int thisVal = getValue().getVal();
         int otherVal = other.getValue().getVal();
 
         return Integer.compare(thisVal, otherVal);

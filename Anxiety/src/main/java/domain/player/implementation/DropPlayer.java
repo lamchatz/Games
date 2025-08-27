@@ -18,8 +18,8 @@ public class DropPlayer implements Player {
     }
 
     protected DropPlayer(String name, Comparator<Card> comparator) {
-        this.hand = new TreeSet<>(comparator);
         this.name = validName(name);
+        hand = new TreeSet<>(comparator);
     }
 
     protected String validName(String name) {
@@ -37,7 +37,7 @@ public class DropPlayer implements Player {
 
     @Override
     public boolean has(Card card) {
-        return this.hand.contains(card);
+        return hand.contains(card);
     }
 
     @Override
@@ -47,17 +47,17 @@ public class DropPlayer implements Player {
 
     @Override
     public boolean hasNoCards() {
-        return this.hand.isEmpty();
+        return hand.isEmpty();
     }
 
     @Override
     public int numberOfCards() {
-        return this.hand.size();
+        return hand.size();
     }
 
     @Override
     public Card play(Card card) {
-        this.hand.remove(card);
+        hand.remove(card);
         return card;
     }
 

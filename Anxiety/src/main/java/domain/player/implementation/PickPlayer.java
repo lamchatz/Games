@@ -4,7 +4,7 @@ import domain.Card;
 import domain.enums.Value;
 import domain.player.declaration.Player;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,28 +18,32 @@ public class PickPlayer implements Player {
 
     public PickPlayer(String name) {
         this.name = validName(name);
-        this.hand = new HashMap<>();
+        hand = new EnumMap<>(Value.class);
         for (Value value : Value.playableValues()) {
             hand.put(value, new HashSet<>(4));
         }
     }
 
     private String validName(String name) {
-        if (name == null || name.isEmpty() || name.isBlank()) {
+        if (name == null || name.isBlank()) {
             throw new IllegalArgumentException(String.format("Given name: %s is not valid!", name));
         }
 
         return name;
     }
 
+    Map<Value, Set<Card>> getHand() {
+        return hand;
+    }
+
     @Override
     public void draw(Card card) {
-        Set<Card> cards = this.hand.get(card.getValue());
+        Set<Card> cards = hand.get(card.getValue());
         int cardsSize = cards.size();
 
         if (cardsSize == 3) {
             cards.clear();
-            this.hand.remove(card.getValue());
+            hand.remove(card.getValue());
             size -= 3;
             return;
         }
@@ -55,7 +59,7 @@ public class PickPlayer implements Player {
 
     @Override
     public boolean has(Value value) {
-        return !this.hand.get(value).isEmpty();
+        return !hand.get(value).isEmpty();
     }
 
     @Override
@@ -70,10 +74,6 @@ public class PickPlayer implements Player {
 
     @Override
     public Card play(Card card) {
-        return remove(card);
-    }
-
-    private Card remove(Card card) {
         size--;
         for (Iterator<Card> it = hand.get(card.getValue()).iterator(); it.hasNext(); ) {
             Card c = it.next();
@@ -89,6 +89,14 @@ public class PickPlayer implements Player {
     @Override
     public String getName() {
         return name;
+    }
+
+    void increaseSize() {
+        size++;
+    }
+
+    void decreaseSize() {
+        size--;
     }
 
     @Override

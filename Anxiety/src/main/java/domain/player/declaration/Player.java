@@ -9,6 +9,7 @@ public interface Player {
     boolean has(Card card);
     boolean has(Value value);
     boolean hasNoCards();
+    int numberOfCards();
     String getName();
     void print();
 }

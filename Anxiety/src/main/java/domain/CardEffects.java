@@ -14,22 +14,22 @@ public class CardEffects {
     private static final Effect ADVANCE = new Advance();
 
     public CardEffects() {
-        this.effects = new HashMap<>();
+        effects = new HashMap<>();
     }
 
     public void add(Value value, Effect effect) {
-        if (this.effects.containsKey(value) && !Reader.overrideEffect(value, this.effects.get(value))) {
+        if (effects.containsKey(value) && !Reader.overrideEffect(value, effects.get(value))) {
             return;
         }
         if (hasEffect(effect) && !Reader.confirm(effect)) {
             return;
         }
 
-        this.effects.put(value, effect);
+        effects.put(value, effect);
     }
 
     private boolean hasEffect(Effect effect) {
-        return this.effects.values().stream().anyMatch(e -> e.getClass().equals(effect.getClass()));
+        return effects.values().stream().anyMatch(e -> e.getClass().equals(effect.getClass()));
     }
 
     private Effect get(Value value) {

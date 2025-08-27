@@ -14,7 +14,7 @@ public class Team {
     public Team(String name, int numberOfMembers) {
         this.name = name;
         this.numberOfMembers = numberOfMembers;
-        this.members = new HashSet<>(numberOfMembers);
+        members = new HashSet<>(numberOfMembers);
     }
 
     public void add(ScoringPlayer player) {
@@ -22,7 +22,7 @@ public class Team {
             throw new IllegalStateException(String.format("Too many players in team: %s, max number %d", name, numberOfMembers));
         }
 
-        this.members.add(player);
+        members.add(player);
     }
 
     public int getTotalScore() {

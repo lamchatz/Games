@@ -5,5 +5,6 @@ public class Main {
         //new Anxiety(2);
         //new GoFish(2);
         new Kseri(2, 2, 50);
+        //new Moutzouris(4);
     }
 }
